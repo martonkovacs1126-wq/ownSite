@@ -1,53 +1,87 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bejelentkezés</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- 1. Tailwind CSS és DaisyUI betöltése -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Google Fonts (ha meg akarod tartani az Inter / Geist / Montserrat betűtípust) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100;300;400;500;600;700;900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <!-- 🟢 PocketBase script törölve -->
-    <script src="script.js" defer></script>
-</head>
-<body class="login-bg">
-    <div class="toastContainer"></div>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <div class="upper">
-        <div class="logo">
-            <img src="user.png" alt="Logo">
-            <p>Adatbázis kezelő</p>
+    <!-- PocketBase SDK és saját script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"></script>
+    <script src="src/script.js" defer></script>
+    <script src="src/colors.js" defer></script>
+    
+    <style>
+        /* Csak a Toast üzenetek animációja maradt itt, mert az egyedi */
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
+        .toast.fade-out { animation: fadeOut 0.5s ease forwards; }
+        .toast { animation: slideIn 0.5s ease forwards; }
+    </style>
+</head>
+<body class="bg-base-200 min-h-screen flex flex-col items-center justify-center p-4 gap-6">
+
+    <!-- Toast üzenetek konténere -->
+    <div class="toastContainer fixed z-50 top-5 left-1/2 -translate-x-1/2"></div>
+
+    <!-- Felső Címsor és Logo -->
+    <div class="text-center flex flex-col items-center">
+        <div class="flex items-center gap-3 mb-2">
+            <img src="user.png" alt="Logo" class="w-16 h-auto">
+            <p class="text-xl font-semibold">Adatbázis kezelő</p>
         </div>
-        <h1>Bejelentkezés</h1>
-        <p>Lépj be a megadott adataiddal.</p>
+        <h1 class="text-3xl font-bold tracking-tight mt-1">Bejelentkezés</h1>
+        <p class="text-base-content/70 text-sm mt-1">Lépj be a megadott adataiddal.</p>
     </div>
 
-    <form class="login" id="login-form" onsubmit="event.preventDefault(); return false;">
-        <div class="main">
-            <label for="email">E-mail</label>
-            <input type="email" id="email" placeholder="pl. xy@yx.hu" required>
+    <!-- Fő Bejelentkező Kártya -->
+    <div class="card w-full max-w-md bg-base-100 shadow-xl border border-base-200">
+        <form class="card-body gap-4" id="login-form" onsubmit="event.preventDefault(); return false;">
+            
+            <!-- E-mail mező -->
+            <div class="form-control w-full">
+                <label class="label"><span class="label-text font-medium">E-mail</span></label>
+                <input type="email" id="email" placeholder="pl. xy@yx.hu" class="input input-bordered w-full" required>
+            </div>
 
-            <label for="pwd">Jelszó</label>
-            <input type="password" id="pwd" placeholder="••••••••" required>
-        </div>
+            <!-- Jelszó mező -->
+            <div class="form-control w-full">
+                <label class="label"><span class="label-text font-medium">Jelszó</span></label>
+                <input type="password" id="pwd" placeholder="••••••••" class="input input-bordered w-full" required>
+            </div>
 
-        <div class="btns">
-            <label class="rememberBox">
-                <input type="checkbox" id="rememberMe" name="rememberMe" value="Yes">
-                <span>Emlékezz rám</span>
-            </label>
-            <a href="#">Elfelejtetted a jelszavad?</a>
-        </div> 
+            <!-- Emlékezz rám & Elfelejtett jelszó -->
+            <div class="flex items-center justify-between text-sm mt-1">
+                <label class="cursor-pointer flex items-center gap-2">
+                    <input type="checkbox" id="rememberMe" name="rememberMe" class="checkbox checkbox-primary checkbox-sm" value="Yes">
+                    <span class="label-text">Emlékezz rám</span>
+                </label>
+                <a href="#" class="link link-primary no-underline hover:underline">Elfelejtetted a jelszavad?</a>
+            </div> 
 
-        <!-- 🟢 Hozzáadva: type="submit" -->
-        <button type="submit" class="loginbtn" id="btnlogin">Bejelentkezés</button>       
-    </form>
-
-    <div class="regpart">
-        <img src="key.png" alt="Key">
-        <p>Regisztráció</p>
+            <!-- Bejelentkezés Gomb -->
+            <div class="card-actions mt-2">
+                <button type="submit" class="btn btn-primary w-full" id="btnlogin">Bejelentkezés</button>      
+            </div>
+        </form>
     </div>
+
+    <!-- Alsó Regisztrációs Sáv -->
+    <div class="w-full max-w-md">
+        <a href="register.html" class="card bg-base-100 shadow-md border border-base-200 p-4 flex flex-row items-center gap-4 hover:bg-base-200 transition-colors">
+            <img src="key.png" alt="Key" class="w-6 h-auto">
+            <p class="font-semibold text-base-content">Regisztráció</p>
+        </a>
+    </div>
+
 </body>
 </html>

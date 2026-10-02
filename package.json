@@ -1,5 +1,7 @@
 {
+  "name": "ownSiteTest",
+  "version": "1.0.0",
   "dependencies": {
-    "@directus/sdk": "^24.0.0"
+    "pocketbase": "^0.21.0"
   }
 }

@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Itt definiálod a saját egyéni témádat */
+@plugin "daisyui/theme" {
+  name: "sajatTema";
+  default: true;
+  --color-primary: #0067b8;
+  --color-primary-focus: #07548f;
+  --color-base-100: #ffffff;
+  --color-base-200: #f7f7f7;
+  --color-base-300: #f1f1f1;
+  --color-neutral: #383838;
+  --color-neutral-content: #ffffff;
+}
+
+/* 🟢 Globális input fókusz stílus mindenhol */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--color-primary) !important;
+}

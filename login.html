@@ -1,37 +1,26 @@
 <!DOCTYPE html>
-<html lang="hu" data-theme="light">
+<html lang="hu" data-theme="sajatTema">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bejelentkezés</title>
-    
-    <!-- 1. Tailwind CSS és DaisyUI betöltése -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
 
-    <!-- Google Fonts (ha meg akarod tartani az Inter / Geist / Montserrat betűtípust) -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- PocketBase SDK és saját script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"></script>
-    <script src="src/script.js" defer></script>
-    <script src="src/colors.js" defer></script>
-    
+    <link rel="stylesheet" href="/src/app.css">
     <style>
-        /* Csak a Toast üzenetek animációja maradt itt, mert az egyedi */
         body { font-family: 'Inter', sans-serif; }
-        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
-        .toast.fade-out { animation: fadeOut 0.5s ease forwards; }
-        .toast { animation: slideIn 0.5s ease forwards; }
+        @keyframes slideIn {from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut {from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-100%); } }
+        .my-toast.fade-out { animation: fadeOut 0.5s ease forwards !important; }
+        .my-toast { animation: slideIn 0.5s ease forwards !important; }
     </style>
 </head>
 <body class="bg-base-200 min-h-screen flex flex-col items-center justify-center p-4 gap-6">
-
     <!-- Toast üzenetek konténere -->
-    <div class="toastContainer fixed z-50 top-5 left-1/2 -translate-x-1/2"></div>
+    <div class="toastContainer fixed z-9999 top-5 left-1/2 -translate-x-1/2"></div>
 
     <!-- Felső Címsor és Logo -->
     <div class="text-center flex flex-col items-center">
@@ -49,14 +38,14 @@
             
             <!-- E-mail mező -->
             <div class="form-control w-full">
-                <label class="label"><span class="label-text font-medium">E-mail</span></label>
+                <label class="label"><span class="fieldset-legend font-medium">E-mail</span></label>
                 <input type="email" id="email" placeholder="pl. xy@yx.hu" class="input input-bordered w-full" required>
             </div>
 
             <!-- Jelszó mező -->
             <div class="form-control w-full">
-                <label class="label"><span class="label-text font-medium">Jelszó</span></label>
-                <input type="password" id="pwd" placeholder="••••••••" class="input input-bordered w-full" required>
+                <label class="label"><span class="fieldset-legend font-medium">Jelszó</span></label>
+                <input type="password" id="pwd" placeholder="••••••••" class="input input-bordered w-full focus:border-base-200" required>
             </div>
 
             <!-- Emlékezz rám & Elfelejtett jelszó -->
@@ -76,12 +65,55 @@
     </div>
 
     <!-- Alsó Regisztrációs Sáv -->
-    <div class="w-full max-w-md">
-        <a href="register.html" class="card bg-base-100 shadow-md border border-base-200 p-4 flex flex-row items-center gap-4 hover:bg-base-200 transition-colors">
-            <img src="key.png" alt="Key" class="w-6 h-auto">
-            <p class="font-semibold text-base-content">Regisztráció</p>
-        </a>
-    </div>
+    <button class="card w-full max-w-md bg-base-100 shadow-md border border-base-200 p-4 flex flex-row items-center gap-4 hover:bg-base-200 transition-colors cursor-pointer" onclick="reg_modal.showModal()">
+        <img src="key.png" alt="Key" class="w-6 h-auto">
+        <p class="font-semibold text-base-content">Regisztráció</p>
+    </button>
+    <dialog id="reg_modal" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold text-center">Regisztráció</h3>
+            <form class="card-body gap-4" id="register-form">            
+                <!-- Név -->
+                <div class="form-control w-full">
+                <label class="label"><span class="fieldset-legend font-medium">Teljes név</span></label>
+                <input type="text" id="reg_name" placeholder="Kiss Jakab" class="input input-bordered w-full" >
+                </div>
 
+                <!-- E-mail mező -->
+                <div class="form-control w-full">
+                    <label class="label"><span class="fieldset-legend font-medium">E-mail</span></label>
+                    <input type="email" id="reg_email" placeholder="xy@yx.hu" class="input input-bordered w-full" >
+                </div>
+
+                <!-- Jelszó mező -->
+                <div class="form-control w-full">
+                    <label class="label"><span class="fieldset-legend font-medium">Jelszó</span></label>
+                    <input type="password" id="reg_pwd1" placeholder="••••••••" class="input input-bordered w-full focus:border-base-200" >
+                </div>
+
+                <div class="form-control w-full">
+                    <label class="label"><span class="fieldset-legend font-medium">Jelszó mégegyszer</span></label>
+                    <input type="password" id="reg_pwd2" placeholder="••••••••" class="input input-bordered w-full focus:border-base-200" >
+                </div>
+
+                <!-- Adatvédelem -->
+                <div class="flex items-center justify-between text-sm mt-1">
+                    <label class="cursor-pointer flex items-center gap-2">
+                        <input type="checkbox" id="reg_adatvedelem" name="adatvelem_elfogadasa" class="checkbox checkbox-primary checkbox-sm" value="Yes">
+                        <p class="label-text font-medium">Adatvédelmi tájékoztató elfogadása</p>
+                    </label>
+                </div> 
+
+                <!-- Regisztráció Gomb -->
+                <div class="card-actions mt-2">
+                    <button type="submit" class="btn btn-primary w-full" id="regbtn">Regisztráció</button>      
+                </div>
+            </form>
+        </div>
+    </dialog>
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>

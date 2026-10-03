@@ -35,19 +35,35 @@ async function checkAuth() {
             expand: 'role'
         });
         const userDisplay = document.querySelector("#username");
-        const avatar = document.querySelector(".avatar");
-
+        const avatar = document.querySelector(".avatarr");
+        const initials = getInitials(user.name);
+        const roleData = Array.isArray(user.expand?.role) 
+            ? user.expand.role[0] 
+            : user.expand?.role;
         if (userDisplay) {
-            const roleTitle = user.expand?.role?.title || 'Tag'; 
+            const roleTitle = roleData?.title || 'Tag';
             const fullName = user.name || user.email;
 
             userDisplay.innerHTML = `${fullName}<br><span class="rang">${roleTitle}</span>`;
         }
         if (avatar) {
-            const initialSource = user.name || user.email;
-            avatar.innerHTML = initialSource[0].toUpperCase();
+            avatar.innerHTML = initials;
         }
+        const roleTitle = roleData?.title || 'Tag'; 
 
+          // Debugging: írasd ki a konzolba, hogy lássuk, mit kap el
+          console.log("Felhasználó rangja:", roleTitle);
+
+          // Admin menü megjelenítése, ha Rendszergazda
+          if (roleTitle === "Rendszergazda") {
+    const menuList = document.querySelector("ul"); // Vagy querySelector("#menuList")
+    const logoutLi = menuList?.querySelector(".mt-auto");
+    
+    if (menuList && logoutLi && !document.querySelector("#adminMenu")) {
+        const adminHTML = `<li id="adminMenu"><a href="http://127.0.0.1:8090/_/" target="_blank"><i class="fi fi-br-limit-hand"></i>Admin felület</a></li>`;
+        logoutLi.insertAdjacentHTML('beforebegin', adminHTML);
+    }
+}
     } catch (error) {
         console.error("Hiba a felhasználói adatok lekérésekor:", error);
         pb.authStore.clear();
@@ -117,7 +133,7 @@ document.addEventListener("click", function(e) {
     // PocketBase tokenek törlése a memóriából és localStorage-ből
     pb.authStore.clear();
 
-    console.log("🧹 Átirányítás a login.html-re...");
+    localStorage.setItem("logout", "Sikeres kijelentkezés!")
     window.location.replace('login.html');
 });
 
@@ -174,8 +190,17 @@ function dismissToast(toastElement) {
     });
 }
 
+function getInitials(fullName) {
+  if (!fullName) return '';
+  
+  return fullName
+    .trim()
+    .split(/\s+/) // Szétbontja a szóközök mentén (akár több szóköz esetén is működik)
+    .map(word => word.charAt(0).toUpperCase()) // Kiveszi az első betűt és nagybetűsíti
+    .join(''); // Összefűzi egy sztringgé
+}
+
 // === REGISZTRÁCIÓ ===
-//EGYELŐRE NEM ELLENŐRZI, HOGY A 2 JELSZÓ EGYEZIK-E, AZ ELSŐT VESZI BE
 //EGYELŐRE NEM ELLENŐRZI, HOGY AZ ADATVÉDELMI TÁJÉKOZTATÓ ELFOGADÁSRA KERÜLT-E
 // Figyeljük a teljes dokumentumot a submit eseményre
 // Közvetlenül a gomb kattintását figyeljük, így a dialog/form nem tudja elnyelni
@@ -200,6 +225,8 @@ document.addEventListener('click', async (e) => {
       alert("A jelszó 8 karakternél rövidebb.");
       return;
     }
+
+    const username = "";
 
     const data = {
       email: reg_email,
@@ -226,9 +253,22 @@ document.addEventListener('DOMContentLoaded', () => {
   
   if (toastMessage) {
     // Azonnal töröljük, hogy egyszer jelenjen csak meg
-    localStorage.removeItem('showToast');
+    localStorage.removeItem('registerSuccess');
 
     // Meghívjuk a toast függvényt a mentett üzenettel
     createToast('success', toastMessage);
   }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toastMessage = localStorage.getItem('logout');
+  
+  if (toastMessage) {
+    // Azonnal töröljük, hogy egyszer jelenjen csak meg
+    localStorage.removeItem('logout');
+
+    // Meghívjuk a toast függvényt a mentett üzenettel
+    createToast('info', toastMessage);
+  }
+});
+

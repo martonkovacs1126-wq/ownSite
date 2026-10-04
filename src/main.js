@@ -29,40 +29,40 @@ async function checkAuth() {
     }
 
     try {
-        // Ez a 29. sor környéki rész: az 'await' CSAK itt, egy async függvényen belül működik helyesen!
-        const userId = pb.authStore.model.id;
-        const user = await pb.collection('users').getOne(userId, {
-            expand: 'role'
-        });
-        const userDisplay = document.querySelector("#username");
-        const avatar = document.querySelector(".avatarr");
-        const initials = getInitials(user.name);
-        const roleData = Array.isArray(user.expand?.role) 
-            ? user.expand.role[0] 
-            : user.expand?.role;
-        if (userDisplay) {
-            const roleTitle = roleData?.title || 'Tag';
-            const fullName = user.name || user.email;
+      // Ez a 29. sor környéki rész: az 'await' CSAK itt, egy async függvényen belül működik helyesen!
+      const userId = pb.authStore.model.id;
+      const user = await pb.collection('users').getOne(userId, {
+          expand: 'role'
+      });
+      const userDisplay = document.querySelector("#username");
+      const avatar = document.querySelector(".avatarr");
+      const initials = getInitials(user.name);
+      const roleData = Array.isArray(user.expand?.role) 
+          ? user.expand.role[0] 
+          : user.expand?.role;
+      if (userDisplay) {
+        const roleTitle = roleData?.title || 'Tag';
+        const fullName = user.name || user.email;
 
-            userDisplay.innerHTML = `${fullName}<br><span class="rang">${roleTitle}</span>`;
-        }
-        if (avatar) {
-            avatar.innerHTML = initials;
-        }
-        const roleTitle = roleData?.title || 'Tag'; 
+        userDisplay.innerHTML = `${fullName}<br><span class="rang">${roleTitle}</span>`;
+      }
+      if (avatar) {
+        avatar.innerHTML = initials;
+      }
+      const roleTitle = roleData?.title || 'Tag'; 
 
-          // Debugging: írasd ki a konzolba, hogy lássuk, mit kap el
-          console.log("Felhasználó rangja:", roleTitle);
+        // Debugging: írasd ki a konzolba, hogy lássuk, mit kap el
+        console.log("Felhasználó rangja:", roleTitle);
 
-          // Admin menü megjelenítése, ha Rendszergazda
-          if (roleTitle === "Rendszergazda") {
-    const menuList = document.querySelector("ul"); // Vagy querySelector("#menuList")
-    const logoutLi = menuList?.querySelector(".mt-auto");
+        // Admin menü megjelenítése, ha Rendszergazda
+        if (roleTitle === "Rendszergazda") {
+        const menuList = document.querySelector("ul"); // Vagy querySelector("#menuList")
+        const logoutLi = menuList?.querySelector(".mt-auto");
     
-    if (menuList && logoutLi && !document.querySelector("#adminMenu")) {
-        const adminHTML = `<li id="adminMenu"><a href="http://127.0.0.1:8090/_/" target="_blank"><i class="fi fi-br-limit-hand"></i>Admin felület</a></li>`;
-        logoutLi.insertAdjacentHTML('beforebegin', adminHTML);
-    }
+      if (menuList && logoutLi && !document.querySelector("#adminMenu")) {
+          const adminHTML = `<li id="adminMenu"><a href="http://127.0.0.1:8090/_/" target="_blank"><i class="fi fi-br-limit-hand"></i>Admin felület</a></li>`;
+          logoutLi.insertAdjacentHTML('beforebegin', adminHTML);
+      }
 }
     } catch (error) {
         console.error("Hiba a felhasználói adatok lekérésekor:", error);
@@ -73,6 +73,20 @@ async function checkAuth() {
 
 // Indítás az oldal betöltésekor
 checkAuth();
+
+async function getActiveUsers() {
+  const activeusers = document.querySelector("#activeusers");
+      const activeresult = pb.collection('users').getList(1,1);
+      if(!activeusers) return;
+      
+      try {
+        activeusers.innerHTML = (await activeresult).totalItems;
+      } catch {
+        console.log(error);
+      };
+}
+
+getActiveUsers();
 
 
 // === 2. BEJELENTKEZÉS KEZELÉSE ===
@@ -235,6 +249,7 @@ document.addEventListener('click', async (e) => {
       passwordConfirm: reg_pwd2,
       emailVisibility: true,
       role: "u6zg3dujd3hiofv", //felhasználó
+      status: "jlpaovgvjlb5x8y",
     };
 
     try {
